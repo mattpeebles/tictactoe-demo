@@ -1,0 +1,70 @@
+.hidden{
+	display: none;
+}
+
+.new-board{
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+.box{
+	width: 100px;
+	height: 100px;
+	display: inline-block;
+}
+
+.first-row{
+	border-bottom: solid 5px black;
+}
+
+.second-row{
+	border-bottom: solid 5px black;
+}
+
+.first-column{
+	border-right: solid 5px black;
+}
+
+.second-column{
+	border-right: solid 5px black;
+}
+
+.gamePiece-container{
+	margin-left: auto;
+	margin-right: auto;
+	position: relative;
+	width: 50px;
+	margin-top: 20px;
+}
+
+.gamePiece{
+	height: 50px;
+	width: 50px;
+	margin-left: auto;
+	margin-right: auto;
+	position: relative;
+}
+
+.board{
+    width: 304px;
+    position: relative;
+    margin-left: auto;
+    padding-left: 16px;
+    margin-right: auto;
+    margin-bottom: 2%;
+}
+
+.button-container{
+    width: 116px;
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+
+}
+
+.redo{
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 5px;
+	position: relative;
+}
