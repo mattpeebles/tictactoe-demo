@@ -20,64 +20,128 @@ var gameTemplate = 	"<div class=\"board\">" +
 					"</div>";
 
 
-var possibleWinners = {
-		"first-row": {
+var possibleWinners = [
+		{
+		"truple": "first-row",
 			"box1-1": 0,
 			"box1-2": 0,
 			"box1-3": 0,
 		}, 
-		"first-column": {
+		{
+		"truple": "first-column",
 			"box1-1": 0,
 			"box2-1": 0,
 			"box3-1": 0,
 		},
-		"forwardDiag": {
+		{
+		"truple": "forwardDiag",
 			"box1-1": 0,
-			"box2-1": 0,
-			"box3-1": 0,
+			"box2-2": 0,
+			"box3-3": 0,
 		},
-		"second-row": {
+		{
+		"truple": "second-row",
 			"box2-1": 0,
 			"box2-2": 0,
 			"box2-3": 0,
 		},
-		"second-column": {
+		{
+		"truple": "second-column",
 			"box1-2": 0,
 			"box2-2": 0,
 			"box3-2": 0,
 		},
-		"third-row": {
+		{
+		"truple": "third-row",
 			"box3-1": 0,
 			"box3-2": 0,
 			"box3-3": 0,
 		},
-		"third-column": {
+		{
+		"truple": "third-column",
 			"box1-3": 0,
 			"box2-3": 0,
 			"box3-3": 0,
 		},
-		"backwardDiag": {
+		{
+		"truple": "backwardDiag",
 			"box3-1": 0,
 			"box2-2": 0,
 			"box1-3": 0,
 		},
-}
+]
 
+let winnerCheck = 0
 
-
-function newBoard(){
-	$(".new-board").on("click", function(){
-		$("#game-container").append(gameTemplate)
-	})
-}
+let winnerStatus = false;
 
 
 function playAgain(){
 	$("#game-container").on("click", ".redo", function(){
-		var currentBoard = $(this).parent().parent()
+		var currentBoard = $(this).parent().prev()
+		console.log($(currentBoard).attr('id'))
 		$(".box", currentBoard).empty();
-		$(".redo", currentBoard).addClass("hidden")
+		$(this).addClass("hidden")
+		document.getElementById(currentBoard.attr("id")).style.pointerEvents = 'auto'
+		$("#winner-message").remove()
+		winnerCheck = 0
+		winnerStatus = false
 	})
+}
+
+function winner(element){
+	document.getElementById(element.attr("id")).style.pointerEvents = 'none'
+	$(".redo", element.next()).removeClass("hidden");
+	possibleWinners = 	[
+							{
+							"truple": "first-row",
+								"box1-1": 0,
+								"box1-2": 0,
+								"box1-3": 0,
+							}, 
+							{
+							"truple": "first-column",
+								"box1-1": 0,
+								"box2-1": 0,
+								"box3-1": 0,
+							},
+							{
+							"truple": "forwardDiag",
+								"box1-1": 0,
+								"box2-2": 0,
+								"box3-3": 0,
+							},
+							{
+							"truple": "second-row",
+								"box2-1": 0,
+								"box2-2": 0,
+								"box2-3": 0,
+							},
+							{
+							"truple": "second-column",
+								"box1-2": 0,
+								"box2-2": 0,
+								"box3-2": 0,
+							},
+							{
+							"truple": "third-row",
+								"box3-1": 0,
+								"box3-2": 0,
+								"box3-3": 0,
+							},
+							{
+							"truple": "third-column",
+								"box1-3": 0,
+								"box2-3": 0,
+								"box3-3": 0,
+							},
+							{
+							"truple": "backwardDiag",
+								"box3-1": 0,
+								"box2-2": 0,
+								"box1-3": 0,
+							},
+						]
 }
 
 
@@ -85,14 +149,6 @@ function gamePlay(){
 	$("#game-container").on("click", ".box", function(){
 		var counter = $(".gamePiece", currentBoard).length;
 		var currentBoard = $(this).parent().parent()
-		var selectedClasses = ($(this).attr("class").split(" "))
-
-		selectedClasses.forEach(function(item){
-				var formItem = "\"" + item + "\""
-				console.log(formItem)
-				var test =  possibleWinners[formItem]
-				console.log(test)
-		})
 
 		if ($(this).children().length > 0){
 			$(this).empty();
@@ -101,19 +157,111 @@ function gamePlay(){
 
 		else if(counter % 2 != 0){
 			var gamePiece = "resources/x.png"
+			let boxId = `${this.id}`
+			possibleWinners.forEach(function(item){
+				if (boxId in item){
+					item[boxId] = 2;
+					for (var i in item){
+						if (item[i] === 2){
+							winnerCheck++
+						}
+						else{
+							winnerCheck = 0
+						}
+						if ((winnerCheck === 3) && (winnerStatus == false)){
+							$(currentBoard).append("<div id=\"winner-message\">X Won</div>")
+							winnerStatus = true;
+							winner(currentBoard)
+						}
+					}
+				}
+			})
 		}
 
 		else{
 			var gamePiece = "resources/o.png"
+			let boxId = `${this.id}`
+			possibleWinners.forEach(function(item){
+				if (boxId in item){
+					item[boxId] = 1;
+					for (var i in item){
+						if (item[i] === 1){
+							winnerCheck++
+						}
+						else{
+							winnerCheck = 0
+						}
+						if (winnerCheck === 3 && winnerStatus == false){
+							$(currentBoard).append("<div id=\"winner-message\">O Won</div>")
+							winnerStatus = true;
+							winner(currentBoard)
+						}
+					}
+				}
+			})
 		}
+
 		var resultHTML = "<div class=\"gamePiece-container\">" + 
 							"<img class=\"gamePiece\" src=\"" + gamePiece + "\">" + 
 						 "</div>"
 
 		$(this).html(resultHTML)
 
-		if (counter == 8){
-			$(".redo", currentBoard).removeClass("hidden");
+		if (counter == 8 && winnerCheck == false){
+			$(".redo", currentBoard.next()).removeClass("hidden");
+			document.getElementById(currentBoard.attr("id")).style.pointerEvents = 'none'
+			$(currentBoard).append("<div id=\"winner-message\">Tie</div>")
+			winnerCheck = 0
+			possibleWinners = [
+									{
+									"truple": "first-row",
+										"box1-1": 0,
+										"box1-2": 0,
+										"box1-3": 0,
+									}, 
+									{
+									"truple": "first-column",
+										"box1-1": 0,
+										"box2-1": 0,
+										"box3-1": 0,
+									},
+									{
+									"truple": "forwardDiag",
+										"box1-1": 0,
+										"box2-2": 0,
+										"box3-3": 0,
+									},
+									{
+									"truple": "second-row",
+										"box2-1": 0,
+										"box2-2": 0,
+										"box2-3": 0,
+									},
+									{
+									"truple": "second-column",
+										"box1-2": 0,
+										"box2-2": 0,
+										"box3-2": 0,
+									},
+									{
+									"truple": "third-row",
+										"box3-1": 0,
+										"box3-2": 0,
+										"box3-3": 0,
+									},
+									{
+									"truple": "third-column",
+										"box1-3": 0,
+										"box2-3": 0,
+										"box3-3": 0,
+									},
+									{
+									"truple": "backwardDiag",
+										"box3-1": 0,
+										"box2-2": 0,
+										"box1-3": 0,
+									},
+							]
 		}
 	});
 }
@@ -121,5 +269,4 @@ function gamePlay(){
 $(function(){
 	gamePlay();
 	playAgain();
-	newBoard();
 })
